@@ -5,19 +5,17 @@ import com.gu.SbtDistPlugin._
 
 object TeamCitySbtRunnerBuild extends Build {
 
-
   val appName         = "sbt-runner"
 
     lazy val root = Project(id = "sbt-runner", base = file("."),
       settings = Defaults.defaultSettings ++ SbtDistPlugin.distSettings
     ).aggregate(common, server, agent).settings(
+      distPath <<= (target) { (target) => target / "dist" / (appName+".zip") },
       distFiles <+= (packageBin in (agent, Compile)) map { _ -> ("agent/"+appName+".zip") },
       distFiles <+= (packageBin in (server, Compile)) map { _ -> ("server/"+appName+".zip") },
       distFiles <+= baseDirectory map { dir =>
         dir / "teamcity-plugin.xml" -> "teamcity-plugin.xml"
       }
-
-      //  (baseDirectory / "teamcity-plugin.xml" -> "teamcity-plugin.xml")
     )
 
 

@@ -3,6 +3,8 @@ import Keys._
 import com.gu._
 import com.gu.SbtDistPlugin._
 
+import sbtassembly.Plugin.AssemblyKeys._
+
 object TeamCitySbtRunnerBuild extends Build {
 
   val appName         = "sbt-runner"
@@ -11,8 +13,8 @@ object TeamCitySbtRunnerBuild extends Build {
       settings = Defaults.defaultSettings ++ SbtDistPlugin.distSettings
     ).aggregate(common, server, agent).settings(
       distPath <<= (target) { (target) => target / "dist" / (appName+".zip") },
-      distFiles <+= (packageBin in (agent, Compile)) map { _ -> ("agent/"+appName+".zip") },
-      distFiles <+= (packageBin in (server, Compile)) map { _ -> ("server/"+appName+".zip") },
+      distFiles <+= (outputPath in (agent, assembly)) map { _ -> ("agent/"+appName+".zip") },
+      distFiles <+= (outputPath in (server, assembly)) map { _ -> ("server/"+appName+".zip") },
       distFiles <+= baseDirectory map { dir =>
         dir / "teamcity-plugin.xml" -> "teamcity-plugin.xml"
       }
